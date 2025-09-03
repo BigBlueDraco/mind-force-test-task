@@ -4,6 +4,7 @@ import { ClassSerializerInterceptor, ValidationPipe } from '@nestjs/common';
 import { NoContentToNotFoundInterceptor } from './common/interseptors/NoContentToNotFoundInterseptor.interseptor';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ConfigService } from '@nestjs/config';
+import { rabbitMQConfig } from './common/config/rabbitmq.config';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
@@ -12,12 +13,12 @@ async function bootstrap() {
     origin: configService.get<string>('FRONT_URL'),
   });
 
-  app.useGlobalInterceptors(
-    new ClassSerializerInterceptor(Reflect, {
-      excludeExtraneousValues: true,
-    }),
-    new NoContentToNotFoundInterceptor(),
-  );
+  // app.useGlobalInterceptors(
+  //   new ClassSerializerInterceptor(Reflect, {
+  //     excludeExtraneousValues: true,
+  //   }),
+  //   new NoContentToNotFoundInterceptor(),
+  // );
   const port = configService.get<string>('PORT') || '3000';
   const url =
     configService.get<string>('BASE_URL') || 'http://localhost:' + port;
@@ -30,6 +31,10 @@ async function bootstrap() {
     .build();
   const document = SwaggerModule.createDocument(app, swaggerConfig);
   SwaggerModule.setup('docs', app, document);
+
+  app.connectMicroservice(rabbitMQConfig());
+
+  await app.startAllMicroservices();
   await app.listen(port);
 }
 bootstrap();

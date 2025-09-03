@@ -10,32 +10,28 @@ services:
       POSTGRES_DB: mind-force
     ports:
       - 5432:5432
-    # volumes:
-    #   - './data/pgdata:/var/lib/postgresql/data
 
   rabbitmq:
-    image: rabbitmq:latest
+    hostname: 'rabbitmq'
+    image: rabbitmq:3.11.4-management
     container_name: rabbitmq
     restart: always
     ports:
-      - 5672:5672
-      - 15672:15672
+      - '5672:5672'
+      - '15672:15672'
     environment:
-      RABBITMQ_DEFAULT_USER: kalo
-      RABBITMQ_DEFAULT_PASS: kalo
-    configs:
-      - source: rabbitmq-plugins
-        target: /etc/rabbitmq/enabled_plugins
+      RABBITMQ_DEFAULT_USER: user
+      RABBITMQ_DEFAULT_PASS: password
+      RABBITMQ_PLUGINS_DIR: /opt/rabbitmq/plugins:/usr/lib/rabbitmq/plugins
+    # command: >
+    #   bash -c "rabbitmq-plugins enable --offline rabbitmq_delayed_message_exchange &&
+    #            rabbitmq-server"
+
     volumes:
-      - rabbitmq-lib:/var/lib/rabbitmq/
-      - rabbitmq-log:/var/log/rabbitmq
-
-configs:
-  rabbitmq-plugins:
-    content: '[rabbitmq_management].'
-
+      - ./rabbitmq/data/:/var/lib/rabbitmq/
+      # - ./rabbitmq/log/:/var/log/rabbitmq/
+      - rabbitmq_logs:/var/log/rabbitmq
+      - ./rabbitmq/enabled_plugins:/etc/rabbitmq/enabled_plugins:rw
+      - ./rabbitmq/plugins:/usr/lib/rabbitmq/plugins
 volumes:
-  rabbitmq-lib:
-    driver: local
-  rabbitmq-log:
-    driver: local
+  rabbitmq_logs:
