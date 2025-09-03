@@ -1,8 +1,21 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString, IsUUID, IsDate, IsEnum, IsNotEmpty } from 'class-validator';
 import { Type } from 'class-transformer';
+import { Request } from '@prisma/client';
 
-export class RequestDto {
+export class RequestDto implements Request {
+  @ApiProperty({
+    description: 'Unique identifier of the request',
+    example: '550e8400-e29b-41d4-a716-446655440001',
+  })
+  @IsUUID()
+  statusId: string;
+  @ApiProperty({
+    description: 'Unique identifier of the request',
+    example: '550e8400-e29b-41d4-a716-446655440001',
+  })
+  @IsUUID()
+  typeId: string;
   @ApiProperty({
     description: 'Unique identifier of the request',
     example: '550e8400-e29b-41d4-a716-446655440000',
