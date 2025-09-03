@@ -1,6 +1,6 @@
 import { Transport, RmqOptions } from '@nestjs/microservices';
 import amqp from 'amqp-connection-manager';
-import { QUEUES } from 'src/rabitmq/constants/queues';
+import { QUEUES } from 'src/request/rabbitmq/constants/queues';
 
 export const rabbitMQConfig = (): RmqOptions => ({
   transport: Transport.RMQ,

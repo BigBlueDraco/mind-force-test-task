@@ -2,14 +2,14 @@ import { Controller, Logger, OnModuleInit } from '@nestjs/common';
 import { EventPattern } from '@nestjs/microservices';
 import * as amqp from 'amqp-connection-manager';
 import { ChannelWrapper } from 'amqp-connection-manager';
+import { RequestService } from '../request.service';
 @Controller()
-export class ConsumerController implements OnModuleInit {
+export class RequestConsumer implements OnModuleInit {
+  constructor(private readonly requestService: RequestService) {}
   private channel: ChannelWrapper;
-  //   @EventPattern('queue')
-  //   async handleMessage(data: Record<string, any>) {
-  //     console.log('Received message:', data);
-  //     console.log(data.content - Date.now());
-  //   }
+  async handleMessage(data: Record<string, any>) {
+    this.requestService.changeToNextStatus(data.id);
+  }
   onModuleInit() {
     const connection = amqp.connect(['amqp://user:password@localhost:5672']);
     this.channel = connection.createChannel({
@@ -18,6 +18,7 @@ export class ConsumerController implements OnModuleInit {
         await channel.consume('queue', (msg) => {
           if (msg) {
             Logger.log(`Received message: ${msg.content.toString()}`);
+            this.handleMessage(JSON.parse(msg));
             channel.ack(msg);
           }
         });

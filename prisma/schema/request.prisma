@@ -3,11 +3,12 @@ model Request {
     createdAt           DateTime              @default(now())
     updatedAt           DateTime              @updatedAt
     text String 
-    status  Status @default(NEW)
+    statusId String
+    status  Status @relation(references: [id], fields: [statusId], onDelete: Cascade)
+    typeId String
+    type Type @relation(references: [id], fields: [typeId], onDelete: Cascade)
 }
 
-enum Status {
-    NEW
-    IN_PROGRESS
-    DONE
-}
+
+
+
