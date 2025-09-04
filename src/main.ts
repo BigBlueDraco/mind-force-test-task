@@ -1,10 +1,11 @@
-import { NestFactory } from '@nestjs/core';
+import { NestFactory, Reflector } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ClassSerializerInterceptor, ValidationPipe } from '@nestjs/common';
 import { NoContentToNotFoundInterceptor } from './common/interseptors/NoContentToNotFoundInterseptor.interseptor';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ConfigService } from '@nestjs/config';
 import { rabbitMQConfig } from './common/config/rabbitmq.config';
+import { CustomExceptionFilter } from './common/filters/exception-filter';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
@@ -12,13 +13,14 @@ async function bootstrap() {
   app.enableCors({
     origin: configService.get<string>('FRONT_URL'),
   });
+  const reflector = app.get(Reflector);
+  app.useGlobalInterceptors(
+    new ClassSerializerInterceptor(reflector, {
+      excludeExtraneousValues: true,
+    }),
+    new NoContentToNotFoundInterceptor(),
+  );
 
-  // app.useGlobalInterceptors(
-  //   new ClassSerializerInterceptor(Reflect, {
-  //     excludeExtraneousValues: true,
-  //   }),
-  //   new NoContentToNotFoundInterceptor(),
-  // );
   const port = configService.get<string>('PORT') || '3000';
   const url =
     configService.get<string>('BASE_URL') || 'http://localhost:' + port;

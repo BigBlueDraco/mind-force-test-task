@@ -1,11 +1,21 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsString, IsUUID, IsDate, IsEnum, IsNotEmpty } from 'class-validator';
 import { Type } from 'class-transformer';
 import { Request } from '@prisma/client';
 import { NEW_STATUS } from 'prisma/seeds/createStatuses';
 import { DEFAULT_REQUEST_TYPE } from 'prisma/seeds/createTypes';
+import { StatusDto } from 'src/status/dto/status.dto';
+import { TypeDto } from 'src/type/dto/type.dto';
 
 export class RequestDto implements Request {
+  @ApiPropertyOptional({
+    type: () => StatusDto,
+  })
+  status?: StatusDto;
+  @ApiPropertyOptional({
+    type: () => TypeDto,
+  })
+  type?: TypeDto;
   @ApiProperty({
     description: 'Unique identifier of the request',
     example: NEW_STATUS.id,
