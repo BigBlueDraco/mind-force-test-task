@@ -22,7 +22,7 @@ export class RequestService extends BasePrismaCrudService<
     prisma: PrismaService,
     private readonly producerService: ProducerService,
   ) {
-    super(prisma, 'request');
+    super(prisma, 'request', { status: true, type: true }, {});
   }
   async changeToNextStatus(id: string) {
     const { status } = (await this.findOne(

@@ -3,7 +3,6 @@ model Status {
     name String
     nextStatusId String? @unique
     next Status? @relation("next", references: [id], fields: [nextStatusId], onDelete: SetNull)
-    prevStatusId String?
     prev Status? @relation("next")
     requests Request[]
 }

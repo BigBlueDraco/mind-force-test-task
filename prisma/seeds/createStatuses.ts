@@ -1,7 +1,7 @@
 import { Prisma, PrismaClient, Status } from '@prisma/client';
 const prisma = new PrismaClient();
 
-const NEW_STATUS: Prisma.StatusCreateInput = {
+export const NEW_STATUS: Prisma.StatusCreateInput = {
   id: 'c3d4e5f6-a7b8-9012-3456-7890abcdef01',
   name: 'new',
 };

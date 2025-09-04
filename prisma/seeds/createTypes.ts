@@ -1,7 +1,7 @@
 import { Prisma, PrismaClient, Status } from '@prisma/client';
 const prisma = new PrismaClient();
 
-const DEFAULT_REQUEST_TYPE: Prisma.TypeCreateInput = {
+export const DEFAULT_REQUEST_TYPE: Prisma.TypeCreateInput = {
   id: '14dd96f5-bbd6-4e19-a3f1-9a935e79350a',
   name: 'default',
 };

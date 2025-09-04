@@ -8,6 +8,7 @@ import {
   Post,
 } from '@nestjs/common';
 import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Prisma } from '@prisma/client';
 import { CreateStatusDto } from './dto/create-status.dto';
 import { StatusDto } from './dto/status.dto';
 import { UpdateStatusDto } from './dto/update-status.dto';
@@ -53,7 +54,12 @@ export class StatusController {
     type: StatusDto,
   })
   async create(@Body() body: CreateStatusDto): Promise<StatusDto> {
-    return await this.statusService.create(body);
+    const { nextStatusId, ...rest } = body;
+    const data: Prisma.StatusCreateInput = {
+      next: nextStatusId ? { connect: { id: nextStatusId } } : undefined,
+      ...rest,
+    };
+    return await this.statusService.create(data);
   }
 
   @Patch(':id')
@@ -72,7 +78,14 @@ export class StatusController {
     @Param('id') id: string,
     @Body() body: UpdateStatusDto,
   ): Promise<StatusDto> {
-    return await this.statusService.update({ id }, body);
+    const { nextStatusId, ...rest } = body;
+    let data: Prisma.StatusUpdateInput = {
+      ...rest,
+    };
+    if (nextStatusId) {
+      data = { ...data, next: { connect: { id: nextStatusId } } };
+    }
+    return await this.statusService.update({ id }, data);
   }
 
   @Delete(':id')

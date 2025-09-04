@@ -12,6 +12,7 @@ import { RequestService } from './request.service';
 import { CreateRequestDto } from './dto/create-request.dto';
 import { UpdateRequestDto } from './dto/update-request.dto';
 import { RequestDto } from './dto/request.dto';
+import { Prisma } from '@prisma/client';
 
 @ApiTags('Requests')
 @Controller('requests')
@@ -53,7 +54,13 @@ export class RequestController {
     type: RequestDto,
   })
   async create(@Body() body: CreateRequestDto): Promise<RequestDto> {
-    return await this.requestService.create(body);
+    const { typeId, statusId, ...rest } = body;
+    const data: Prisma.RequestCreateInput = {
+      type: { connect: { id: body.typeId } },
+      status: { connect: { id: body.statusId } },
+      ...rest,
+    };
+    return await this.requestService.create(data);
   }
 
   @Patch(':id')
@@ -72,7 +79,18 @@ export class RequestController {
     @Param('id') id: string,
     @Body() body: UpdateRequestDto,
   ): Promise<RequestDto> {
-    return await this.requestService.update({ id }, body);
+    const { typeId, statusId, ...rest } = body;
+    let data: Prisma.RequestUpdateInput = {
+      ...rest,
+    };
+    if (typeId) {
+      data = { ...data, type: { connect: { id: typeId } } };
+    }
+    if (statusId) {
+      data = { ...data, status: { connect: { id: statusId } } };
+    }
+
+    return await this.requestService.update({ id }, data);
   }
 
   @Delete(':id')
