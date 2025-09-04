@@ -39,6 +39,8 @@ RABBITMQ_URL = "amqp://user:password@localhost:5672"
 REDIS_HOST = "localhost"
 REDIS_PORT = "6379"
 REDIS_PASSWORD = "my-password"
+THROTTLE_TTL = 60000
+THROTTLE_LIMIT = 1
 ```
 
 3. **Prepare the project**
