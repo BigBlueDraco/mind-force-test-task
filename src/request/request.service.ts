@@ -84,7 +84,7 @@ export class RequestService extends BasePrismaCrudService<
         status: Status;
       };
       if (status && status.nextStatusId) {
-        const updatedRequest = (await super.update(
+        const updatedRequest = (await this.update(
           { id },
           { status: { connect: { id: status.nextStatusId } } },
           { status: true },
