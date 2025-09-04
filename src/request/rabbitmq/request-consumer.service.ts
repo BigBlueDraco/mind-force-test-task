@@ -17,8 +17,7 @@ export class RequestConsumer implements OnModuleInit {
         await channel.assertQueue('queue', { durable: true });
         await channel.consume('queue', (msg) => {
           if (msg) {
-            Logger.log(`Received message: ${msg.content.toString()}`);
-            this.handleMessage(JSON.parse(msg));
+            this.handleMessage(JSON.parse(msg.content));
             channel.ack(msg);
           }
         });
